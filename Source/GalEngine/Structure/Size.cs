@@ -11,6 +11,8 @@ namespace GalEngine
         public int Width { get; set; }
         public int Height { get; set; }
 
+        public bool Empty => Width == 0 || Height == 0;
+
         public Size(int width = 0, int height = 0)
         {
             Width = width;
@@ -40,6 +42,11 @@ namespace GalEngine
             hashCode = hashCode * -1521134295 + EqualityComparer<int>.Default.GetHashCode(Width);
             hashCode = hashCode * -1521134295 + EqualityComparer<int>.Default.GetHashCode(Height);
             return hashCode;
+        }
+
+        public override string ToString()
+        {
+            return "Width = " + Width + ", Height = " + Height;
         }
     }
 

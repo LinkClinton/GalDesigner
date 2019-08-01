@@ -49,12 +49,23 @@ namespace GalEngine
 
         ~Image() => Dispose();
 
-        public void CopyFromImage(Point2 destination, Image texture, Rectangle region)
+        public void CopyFromImage(Point2 destination, Image image, Rectangle region)
         {
+            var copySize = new Size(
+                region.Right - region.Left,
+                region.Bottom - region.Top);
+
+            LogEmitter.Assert(
+                image.Size.Width >= region.Right &&
+                image.Size.Height >= region.Bottom &&
+                destination.X + copySize.Width <= Size.Width &&
+                destination.Y + copySize.Height <= Size.Height,
+                LogLevel.Warning, "[Copy From Image Failed with Invalid Size]");
+
             //do not need copy, because the size is zero
             if (region.Left == region.Right || region.Top == region.Bottom) return;
 
-            mTexture.CopyFromGpuTexture2D(destination, texture.mTexture, region);
+            mTexture.CopyFromGpuTexture2D(destination, image.mTexture, region);
         }
 
         public void Dispose()

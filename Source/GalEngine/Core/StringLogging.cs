@@ -272,7 +272,7 @@ namespace GalEngine
 
         public static void Assert(bool condition, LogLevel level, string logText, params object[] context)
         {
-            if (condition == false) Apply(level, logText, condition);
+            if (condition == false) Apply(level, logText, context);
         }
 
         public static void EnableLevel(LogLevel level, bool state)

@@ -123,7 +123,9 @@ namespace GalEngine
 
         public static void ReSizeCanvas(Size size)
         {
-            if (Canvas?.Size == size) return;
+            //when size is not changed or size is 0,
+            //we do not change the size of gui
+            if (Canvas?.Size == size || size.Empty == true) return;
 
             //update the position and dispose the canvas
             if (Canvas != null)
