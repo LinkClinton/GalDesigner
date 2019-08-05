@@ -82,6 +82,8 @@
     <Compile Include="Core\GameSystem\GuiSystem\GuiControl\GuiText.cs" />
     <Compile Include="Core\GameSystem\GuiSystem\GuiElement\GuiRectangleElement.cs" />
     <Compile Include="Core\GameSystem\GuiSystem\GuiElement\GuiElement.cs" />
+    <Compile Include="Structure\Container\DeferredDictionary.cs" />
+    <Compile Include="Structure\Container\ImmediateDictionary.cs" />
     <Compile Include="Structure\Transform.cs" />
     <Compile Include="Core\GameSystem\GuiSystem\GuiGroup.cs" />
     <Compile Include="Core\GameSystem\GuiSystem\GuiProperty.cs" />

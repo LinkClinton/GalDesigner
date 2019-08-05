@@ -19,7 +19,7 @@ namespace GalEngine
 
         internal static GlobalGuiElementStatus GlobalElementStatus;
 
-        public static Dictionary<string, GuiGroup> Groups { get; }
+        public static DeferredDictionary<string, GuiGroup> Groups { get; }
 
         public static Image Canvas { get; private set; }
 
@@ -73,6 +73,8 @@ namespace GalEngine
 
         internal static void Update(float delta)
         {
+            Groups.Flush();
+
             foreach (var group in Groups) group.Value.Update(delta);
         }
 
@@ -113,7 +115,11 @@ namespace GalEngine
 
         static Gui()
         {
-            Groups = new Dictionary<string, GuiGroup>();
+            //we use deferred dictionary, so we can add gui group at for-each
+            //but we only add command at that time, and solve the commands in Flush()
+            //the gui group we added will be added at next frame
+            Groups = new DeferredDictionary<string, GuiGroup>();
+
             InputMapped = new InputMapped();
         }
 
