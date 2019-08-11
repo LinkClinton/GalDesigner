@@ -22,17 +22,26 @@ namespace TestUnit
                 }
             });
 
-            var stream = new AudioStream(@"C:\Users\LinkC\source\love.mp3");
-           
-            AudioQueue audioQueue = new AudioQueue();
 
-            audioQueue.Add(stream, 0, stream.Length);
+            var stream0 = new AudioStream(@"C:\Users\LinkC\source\love.mp3");
+            var stream1 = new AudioStream(@"C:\Users\LinkC\source\free.wav");
 
-            AudioSource audioSource = new AudioSource(stream.WaveFormat);
+            AudioQueue audioQueue0 = new AudioQueue();
+            AudioQueue audioQueue1 = new AudioQueue();
 
-            audioSource.SubmitAudioQueue(audioQueue);    
-            audioSource.Start();
 
+            audioQueue0.Add(stream0, 0, stream0.Length);
+            audioQueue1.Add(stream1, 0, stream1.Length);
+
+
+            AudioSource audioSource0 = new AudioSource(stream0.WaveFormat);
+            AudioSource audioSource1 = new AudioSource(stream1.WaveFormat);
+
+            audioSource0.SubmitAudioQueue(audioQueue0);
+            audioSource1.SubmitAudioQueue(audioQueue1);
+
+            audioSource0.Start();
+            audioSource1.Start();
 
 
             GameSystems.RunLoop();

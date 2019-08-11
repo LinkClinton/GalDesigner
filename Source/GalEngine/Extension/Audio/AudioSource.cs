@@ -14,16 +14,17 @@ namespace GalEngine.Extension.Audio
 
         private SharpDX.XAudio2.SourceVoice mSourceVoice;
 
+        private Task mStreamBufferTask;
         private SharpDX.DataBuffer[] mStreamBuffer;
         private int mCurrentBuffer;
 
         private AudioQueue mAudioQueue;
         
-        private bool SubmitAudioBuffer()
+        private void SubmitAudioBuffer()
         {
             var streamData = mAudioQueue.ReadAudio();
 
-            if (streamData == null) return false;
+            if (streamData == null) return;
 
             if (mStreamBuffer[mCurrentBuffer] == null || 
                 mStreamBuffer[mCurrentBuffer].Size != streamData.Length)
@@ -42,8 +43,6 @@ namespace GalEngine.Extension.Audio
             mSourceVoice.SubmitSourceBuffer(buffer, null);
 
             mCurrentBuffer = (mCurrentBuffer + 1) % mBufferCount;
-
-            return true;
         }
 
         public WaveFormat WaveFormat { get; }
@@ -62,11 +61,13 @@ namespace GalEngine.Extension.Audio
             mStreamBuffer = new SharpDX.DataBuffer[mBufferCount];
             mCurrentBuffer = 0;
 
-            //notice: do not add buffer at buffer end
-            //fix soon
             mSourceVoice.BufferEnd += (IntPtr obj) =>
               {
-                  SubmitAudioBuffer();
+                  mStreamBufferTask?.Wait();
+
+                  mStreamBufferTask?.Dispose();
+                  mStreamBufferTask = new Task(SubmitAudioBuffer);
+                  mStreamBufferTask.Start();
               };
         }
 
@@ -83,6 +84,7 @@ namespace GalEngine.Extension.Audio
         public virtual void Start()
         {
             SubmitAudioBuffer();
+            SubmitAudioBuffer();
 
             mSourceVoice.Start();
         }
@@ -90,6 +92,9 @@ namespace GalEngine.Extension.Audio
         public virtual void Stop()
         {
             mSourceVoice.Stop();
+
+            mStreamBufferTask?.Wait();
+            mStreamBufferTask?.Dispose();
         }
 
         public virtual void Dispose()
