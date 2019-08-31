@@ -11,16 +11,16 @@ namespace GalEngine.Runtime.Graphics
         private int mRowPitch;
 
         public GpuPixelFormat PixelFormat { get; }
-        public Size<int> Size { get; }
+        public Size Size { get; }
 
         public GpuTexture2D(
-            Size<int> size,
+            Size size,
             GpuPixelFormat pixelFormat, 
             GpuDevice device,
             GpuResourceInfo resourceInfo) :
             base(device, size.Width * size.Height * GpuConvert.SizeOfInBytes(pixelFormat), resourceInfo)
         {
-            Size = new Size<int>(size.Width, size.Height);
+            Size = new Size(size.Width, size.Height);
             PixelFormat = pixelFormat;
 
             mRowPitch = Size.Width * GpuConvert.SizeOfInBytes(PixelFormat);
@@ -40,7 +40,7 @@ namespace GalEngine.Runtime.Graphics
             });
         }
 
-        public void CopyFromGpuTexture2D(Position<int> destination, GpuTexture2D source, Rectangle<int> region)
+        public void CopyFromGpuTexture2D(Point2 destination, GpuTexture2D source, Rectangle region)
         {
             if (region.Right - region.Left == 0 || region.Bottom - region.Top == 0) return;
 

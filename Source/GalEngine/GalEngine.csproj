@@ -36,11 +36,17 @@
     <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CSCore, Version=1.2.1.2, Culture=neutral, PublicKeyToken=5a08f2b6f4415dea, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CSCore.1.2.1.2\lib\net35-client\CSCore.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SharpDX.4.2.0\lib\net45\SharpDX.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.D3DCompiler, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SharpDX.D3DCompiler.4.2.0\lib\net45\SharpDX.D3DCompiler.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct2D1, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SharpDX.Direct2D1.4.2.0\lib\net45\SharpDX.Direct2D1.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Direct3D11, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SharpDX.Direct3D11.4.2.0\lib\net45\SharpDX.Direct3D11.dll</HintPath>
@@ -48,12 +54,16 @@
     <Reference Include="SharpDX.DXGI, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SharpDX.DXGI.4.2.0\lib\net45\SharpDX.DXGI.dll</HintPath>
     </Reference>
+    <Reference Include="SharpDX.XAudio2, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SharpDX.XAudio2.4.2.0\lib\net45\SharpDX.XAudio2.dll</HintPath>
+    </Reference>
     <Reference Include="SharpFont, Version=4.0.1.200, Culture=neutral, PublicKeyToken=48add4c483071cdf, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SharpFont.4.0.1\lib\net45\SharpFont.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -62,49 +72,50 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\BehaviorSystem\AssetSystem\Asset.cs" />
-    <Compile Include="Core\BehaviorSystem\AssetSystem\AssetGraph.cs" />
-    <Compile Include="Core\BehaviorSystem\AssetSystem\AssetSystem.cs" />
-    <Compile Include="Core\BehaviorSystem\AssetSystem\Component\PackageComponent.cs" />
-    <Compile Include="Core\BehaviorSystem\AssetSystem\Package.cs" />
-    <Compile Include="Core\BehaviorSystem\BehaviorSystem.cs" />
-    <Compile Include="Core\BehaviorSystem\GuiSystem\Component\GuiComponent.cs" />
-    <Compile Include="Core\BehaviorSystem\GuiSystem\Component\LogicGuiComponent\GuiComponentEvent.cs" />
-    <Compile Include="Core\BehaviorSystem\GuiSystem\Component\LogicGuiComponent\GuiComponentEventPart.cs" />
-    <Compile Include="Core\BehaviorSystem\GuiSystem\Component\LogicGuiComponent\LogicGuiComponent.cs" />
-    <Compile Include="Core\BehaviorSystem\GuiSystem\Component\TransformGuiComponent.cs" />
-    <Compile Include="Core\BehaviorSystem\GuiSystem\Component\VisualGuiComponent\ButtonGuiComponent.cs" />
-    <Compile Include="Core\BehaviorSystem\GuiSystem\Component\VisualGuiComponent\ImageGuiComponent.cs" />
-    <Compile Include="Core\BehaviorSystem\GuiSystem\Component\VisualGuiComponent\InputTextGuiComponent.cs" />
-    <Compile Include="Core\BehaviorSystem\GuiSystem\Component\VisualGuiComponent\RectangleGuiComponent.cs" />
-    <Compile Include="Core\BehaviorSystem\GuiSystem\Component\VisualGuiComponent\TextGuiComponent.cs" />
-    <Compile Include="Core\BehaviorSystem\GuiSystem\Component\VisualGuiComponent\VisualGuiComponent.cs" />
+    <Content Include="Core\GameSystem\GuiSystem\GuiAsset\GuiRenderShader.hlsl" />
     <Content Include="freetype6.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Core\BehaviorSystem\GuiSystem\GuiAsset\GuiRenderTexturePixelShader.hlsl" />
-    <Compile Include="Core\BehaviorSystem\GuiSystem\GuiControl\GuiButton.cs" />
-    <Compile Include="Core\BehaviorSystem\GuiSystem\GuiControl\GuiControl.cs" />
-    <Compile Include="Core\BehaviorSystem\GuiSystem\GuiControl\GuiInputText.cs" />
-    <Compile Include="Core\BehaviorSystem\GuiSystem\GuiControl\GuiText.cs" />
-    <Compile Include="Core\BehaviorSystem\GuiSystem\GuiProperty.cs" />
-    <Compile Include="Core\BehaviorSystem\GuiSystem\LogicGuiSystem.cs" />
-    <Compile Include="Core\BehaviorSystem\GuiSystem\GuiRender.cs" />
-    <Compile Include="Core\BehaviorSystem\GuiSystem\VisualGuiSystem.cs" />
     <Compile Include="Core\GameResource\Text\Font.cs" />
+    <Compile Include="Core\GameResource\Text\FontClass.cs" />
     <Compile Include="Core\GameResource\Text\RowText.cs" />
-    <Compile Include="Core\GameResource\Shape\Shape.cs" />
     <Compile Include="Core\GameResource\Text\Text.cs" />
     <Compile Include="Core\GameResource\Image\Image.cs" />
+    <Compile Include="Core\GameSystem\GuiSystem\Gui.cs" />
+    <Compile Include="Core\GameSystem\GuiSystem\GuiControl\GuiButton.cs" />
+    <Compile Include="Core\GameSystem\GuiSystem\GuiControl\GuiFactory.cs" />
+    <Compile Include="Core\GameSystem\GuiSystem\GuiControl\GuiInputText.cs" />
+    <Compile Include="Core\GameSystem\GuiSystem\GuiControl\GuiStyle.cs" />
+    <Compile Include="Core\GameSystem\GuiSystem\GuiControl\GuiText.cs" />
+    <Compile Include="Core\GameSystem\GuiSystem\GuiElement\GuiRectangleElement.cs" />
+    <Compile Include="Core\GameSystem\GuiSystem\GuiElement\GuiElement.cs" />
+    <Compile Include="Extension\Audio\AudioDevice.cs" />
+    <Compile Include="Extension\Audio\AudioQueue.cs" />
+    <Compile Include="Extension\Audio\AudioSource.cs" />
+    <Compile Include="Extension\Audio\AudioStream.cs" />
+    <Compile Include="Extension\Audio\WaveFormat.cs" />
+    <Compile Include="Structure\Container\DeferredDictionary.cs" />
+    <Compile Include="Structure\Container\ImmediateDictionary.cs" />
+    <Compile Include="Structure\Transform.cs" />
+    <Compile Include="Core\GameSystem\GuiSystem\GuiGroup.cs" />
+    <Compile Include="Core\GameSystem\GuiSystem\GuiProperty.cs" />
+    <Compile Include="Core\GameSystem\GuiSystem\GuiRender.cs" />
+    <Compile Include="Core\GameSystem\InputSystem\InputAction\AxisInputAction.cs" />
+    <Compile Include="Core\GameSystem\InputSystem\InputAction\ButtonInputAction.cs" />
+    <Compile Include="Core\GameSystem\InputSystem\InputAction\CharInputAction.cs" />
+    <Compile Include="Core\GameSystem\InputSystem\InputCombine.cs" />
+    <Compile Include="Core\GameSystem\InputSystem\InputMapped.cs" />
+    <Compile Include="Core\GameSystem\InputSystem\InputTransport\InputEmitter.cs" />
+    <Compile Include="Core\GameSystem\InputSystem\InputTransport\InputListener.cs" />
+    <Compile Include="Core\GameSystem\InputSystem\InputProperty.cs" />
+    <Compile Include="Core\GameSystem\InputSystem\InputTransport\InputSolver.cs" />
+    <Compile Include="Core\GameSystem\InputSystem\InputStatus.cs" />
+    <Compile Include="Core\GameSystem\InputSystem\InputType.cs" />
     <Compile Include="Core\PresentRender.cs" />
     <Compile Include="Core\StringLogging.cs" />
-    <Compile Include="Core\BehaviorSystem\RequireComponents.cs" />
-    <Compile Include="Core\GameObject\Component\Component.cs" />
-    <Compile Include="Core\GameScene\GameScene.cs" />
     <Compile Include="Core\GameSystems.cs" />
     <Compile Include="Core\StringProperty.cs" />
     <Compile Include="Core\Time.cs" />
-    <Compile Include="Core\GameObject\GameObject.cs" />
     <Compile Include="Enumeration\EnumerationConvert.cs" />
     <Compile Include="Enumeration\KeyCode.cs" />
     <Compile Include="Enumeration\LogColor.cs" />
@@ -118,7 +129,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Runtime\Event\BaseEvent.cs" />
+    <Compile Include="Runtime\Event\CharEvent.cs" />
     <Compile Include="Runtime\Event\EventEmitter.cs" />
+    <Compile Include="Runtime\Event\EventForwardInputEmitter.cs" />
     <Compile Include="Runtime\Event\EventListener.cs" />
     <Compile Include="Runtime\Event\KeyBoardEvent.cs" />
     <Compile Include="Runtime\Event\MouseEvent.cs" />
@@ -148,8 +161,9 @@
     <Compile Include="Structure\Color.cs" />
     <Compile Include="Structure\Graph.cs" />
     <Compile Include="Structure\Container\LegalContainer.cs" />
-    <Compile Include="Structure\Position.cs" />
     <Compile Include="Structure\Container\MappedContainer.cs" />
+    <Compile Include="Structure\Math\Point2.cs" />
+    <Compile Include="Structure\Math\Vector3.cs" />
     <Compile Include="Structure\Rectangle.cs" />
     <Compile Include="Structure\SegmentRange.cs" />
     <Compile Include="Structure\Size.cs" />
@@ -170,6 +184,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
@@ -177,9 +192,8 @@
     <None Include="Asset\PresentDrawPixelShader.hlsl" />
     <Content Include="Asset\PresentMaskPixelShader.hlsl" />
     <Content Include="Asset\PresentVertexShader.hlsl" />
-    <Content Include="Core\BehaviorSystem\GuiSystem\GuiAsset\GuiRenderCommonVertexShader.hlsl" />
-    <Content Include="Core\BehaviorSystem\GuiSystem\GuiAsset\GuiRenderColorPixelShader.hlsl" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

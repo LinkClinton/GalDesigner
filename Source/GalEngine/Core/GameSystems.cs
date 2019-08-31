@@ -8,80 +8,30 @@ using GalEngine.Runtime.Graphics;
 
 namespace GalEngine
 {
+    public class WindowInfo
+    {
+        public string Name { get; set; }
+        public string Icon { get; set; }
+        public Size Size { get; set; }
+    }
+
     public class GameStartInfo
     {
-        public string WindowName { get; set; }
-        public string GameName { get; set; }
-        public string IconName { get; set; }
-
-        public Size<int> WindowSize { get; set; }
-
+        public string Name { get; set; }
+        public WindowInfo Window { get; set; }
         public GpuAdapter Adapter { get; set; }
     }
 
     public static class GameSystems
-    {
-       
+    {  
         private static PresentRender PresentRender { get; set; }
-
-        public static AssetSystem AssetSystem { get; private set; }
-
-        public static LogicGuiSystem LogicGuiSystem { get; private set; }
-        public static VisualGuiSystem VisualGuiSystem { get; private set; }
-        
-
-        public static List<BehaviorSystem> BehaviorSystems { get; set; }
-
-        public static GameScene MainScene { get; set; }
-        public static GameScene SystemScene { get; private set; }
         public static EngineWindow EngineWindow { get; private set; }
         public static GpuDevice GpuDevice { get; private set; }
         
-
         public static string GameName { get; private set; }
         public static bool IsExist { get; set; }
         
-        private static void UpdateBehaviorSystem(BehaviorSystem system)
-        {
-            if (system.IsActive == false) return;
-
-            //update system
-            system.Update();
-
-            //build scenes
-            GameScene[] scenes = new GameScene[2]
-            {
-                SystemScene, MainScene
-            };
-
-            foreach (var scene in scenes)
-            {
-                if (scene == null) continue;
-
-                //create passed gameobject list
-                List<GameObject> passedGameObjects = new List<GameObject>();
-
-                void SearchNode(GameObject node, ref List<GameObject> passedList)
-                {
-                    if (node is null) return;
-
-                    //if node can not pass the requirement
-                    //we will not to search the children of node
-                    if (system.RequireComponents.IsPass(node) is false) return;
-
-                    passedList.Add(node);
-
-                    foreach (var child in node.Children)
-                        SearchNode(child, ref passedList);
-                }
-
-                foreach (var child in scene.Root.Children)
-                    SearchNode(child, ref passedGameObjects);
-
-                system.Excute(passedGameObjects);
-            }
-        }
-
+        
         private static void InitializeRuntime(GameStartInfo gameStartInfo)
         {
             if (gameStartInfo.Adapter == null)
@@ -95,41 +45,25 @@ namespace GalEngine
             else GpuDevice = new GpuDevice(gameStartInfo.Adapter);
 
             EngineWindow = new EngineWindow(
-                gameStartInfo.WindowName,
-                gameStartInfo.IconName,
-                gameStartInfo.WindowSize);
+                gameStartInfo.Window.Name,
+                gameStartInfo.Window.Icon,
+                gameStartInfo.Window.Size);
             EngineWindow.Show();
 
             PresentRender = new PresentRender(GpuDevice, EngineWindow.Handle, EngineWindow.Size);
-
-            //init resize event
-            EngineWindow.OnSizeChangeEvent += (sender, eventArg) =>
-            {
-                PresentRender.ReSize(eventArg.After);
-                VisualGuiSystem.Area = new Rectangle<int>(0, 0, eventArg.After.Width, eventArg.After.Height);
-            };
         }
 
         public static void Initialize(GameStartInfo gameStartInfo)
         {
-            GameName = gameStartInfo.GameName;
-            
-            BehaviorSystems = new List<BehaviorSystem>();
+            GameName = gameStartInfo.Name;
 
             IsExist = true;
-
-            SystemScene = new GameScene("SystemScene");
             
             InitializeRuntime(gameStartInfo);
 
-            //add system
-            AddBehaviorSystem(AssetSystem = new AssetSystem());
-            AddBehaviorSystem(LogicGuiSystem = new LogicGuiSystem());
-            AddBehaviorSystem(VisualGuiSystem = new VisualGuiSystem(GpuDevice, new Rectangle<int>(0, 0, EngineWindow.Size.Width, EngineWindow.Size.Height)));
+            Gui.Initialize();
 
-            EngineWindow.AddEventListener(LogicGuiSystem);
-
-            LogEmitter.Apply(LogLevel.Information, "[Initialize GameSystems Finish] from [GameSystems]");
+            LogEmitter.Apply(LogLevel.Information, "[Initialize Game Systems Finish] from [GameSystems]");
         }
         
         public static void RunLoop()
@@ -139,35 +73,28 @@ namespace GalEngine
                 //update time
                 Time.Update();
 
-                SystemScene?.Update(Time.DeltaSeconds);
-                MainScene?.Update(Time.DeltaSeconds);
-
-                BehaviorSystems.ForEach((system) => UpdateBehaviorSystem(system));
-
                 if (EngineWindow != null && EngineWindow.IsExisted != false)
                     EngineWindow.Update(Time.DeltaSeconds);
 
                 if (EngineWindow != null && EngineWindow.IsExisted == false)
                     IsExist = false;
+                
+                //update time
+                InputListener.Update();
+                Gui.Update(Time.DeltaSeconds);
+                
+                //draw time
+                Gui.Draw();
 
+                //present time
                 PresentRender.BeginDraw();
-                BehaviorSystems.ForEach((system) => system.Present(PresentRender));
+
+                Gui.Present(PresentRender);
+
                 PresentRender.EndDraw(false);
+
+                InputListener.Clear();
             }
-        }
-
-        public static void AddBehaviorSystem(BehaviorSystem behaviorSystem)
-        {
-            BehaviorSystems.Add(behaviorSystem);
-            
-            LogEmitter.Apply(LogLevel.Information, "[Add Behavior System] [Name = {0}] from [GameSystems]", behaviorSystem.Name);
-        }
-
-        public static void RemoveBehaviorSystem(BehaviorSystem behaviorSystem)
-        {
-            BehaviorSystems.Remove(behaviorSystem);
-
-            LogEmitter.Apply(LogLevel.Information, "[Remove Behavior System] [Name = {0}] from [GameSystems]", behaviorSystem.Name);
         }
     }
 }

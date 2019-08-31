@@ -6,16 +6,27 @@ using System.Threading.Tasks;
 
 namespace GalEngine
 {
-    public class Vector2<T>
+    public struct Vector2
     {
-        public T X { get; }
-        public T Y { get; }
-        
-        public Vector2(
-            T x = default(T),
-            T y = default(T))
+        public int X { get; set; }
+        public int Y { get; set; }
+
+        public Vector2(int x = 0, int y = 0)
         {
-            X = x; Y = y;
+            X = x;
+            Y = y;
+        }
+    }
+
+    public struct Vector2f
+    {
+        public float X { get; set; }
+        public float Y { get; set; }
+
+        public Vector2f(float x = 0, float y = 0)
+        {
+            X = x;
+            Y = y;
         }
     }
 }

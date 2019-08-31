@@ -40,6 +40,11 @@ namespace GalEngine
             return Min(Max(value, min), max);
         }
 
+        public static float Center(float max, float min)
+        {
+            return (max - min) * 0.5f;
+        }
+
         public static void Assert(bool condition)
         {
 #if DEBUG

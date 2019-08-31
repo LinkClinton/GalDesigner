@@ -14,7 +14,7 @@ namespace GalEngine.Runtime.Graphics
 
         internal SharpDX.Direct3D11.RenderTargetView RenderTarget { get => mRenderTarget; }
 
-        public Size<int> Size { get; }
+        public Size Size { get; }
         
         public GpuRenderTarget(GpuDevice device, GpuSwapChain swapChain)
         {
@@ -35,7 +35,7 @@ namespace GalEngine.Runtime.Graphics
             mRenderTarget = new SharpDX.Direct3D11.RenderTargetView(GpuDevice.Device, backTexture, renderTargetDesc);
 
             //set size
-            Size = new Size<int>(swapChain.Size.Width, swapChain.Size.Height);
+            Size = new Size(swapChain.Size.Width, swapChain.Size.Height);
         }
 
         public GpuRenderTarget(GpuDevice device, GpuTexture2D texture)
@@ -56,7 +56,7 @@ namespace GalEngine.Runtime.Graphics
             mRenderTarget = new SharpDX.Direct3D11.RenderTargetView(GpuDevice.Device, texture.Resource, renderTargetDesc);
 
             //set size
-            Size = new Size<int>(texture.Size.Width, texture.Size.Height);
+            Size = new Size(texture.Size.Width, texture.Size.Height);
         }
 
         ~GpuRenderTarget() => Dispose();

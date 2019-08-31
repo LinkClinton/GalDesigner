@@ -118,14 +118,8 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="GuiRenderColorPixelShader" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Core\BehaviorSystem\GuiSystem\GuiAsset\GuiRenderColorPixelShader.hlsl;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="GuiRenderCommonVertexShader" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Core\BehaviorSystem\GuiSystem\GuiAsset\GuiRenderCommonVertexShader.hlsl;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="GuiRenderTexturePixelShader" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Core\BehaviorSystem\GuiSystem\GuiAsset\GuiRenderTexturePixelShader.hlsl;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="GuiRenderShader" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Core\GameSystem\GuiSystem\GuiAsset\GuiRenderShader.hlsl;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="PresentDrawPixelShader" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Asset\PresentDrawPixelShader.hlsl;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>

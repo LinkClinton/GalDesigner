@@ -8,9 +8,9 @@ namespace GalEngine
 {
     public class MouseMoveEvent : BaseEvent
     {
-        public Position<int> Position { get; }
+        public Point2 Position { get; }
 
-        public MouseMoveEvent(DateTime time, Position<int> position) : base(time)
+        public MouseMoveEvent(DateTime time, Point2 position) : base(time)
         {
             Position = position;
         }
@@ -21,7 +21,7 @@ namespace GalEngine
         public bool IsDown { get; }
         public MouseButton Button { get; }
 
-        public MouseClickEvent(DateTime time, Position<int> position, MouseButton button,
+        public MouseClickEvent(DateTime time, Point2 position, MouseButton button,
             bool isDown) : base(time, position)
         {
             Button = button;
@@ -33,7 +33,7 @@ namespace GalEngine
     {
         public int Offset { get; }
 
-        public MouseWheelEvent(DateTime time, Position<int> position, int offset) : base(time, position)
+        public MouseWheelEvent(DateTime time, Point2 position, int offset) : base(time, position)
         {
             Offset = offset;
         }

@@ -6,45 +6,83 @@ using System.Threading.Tasks;
 
 namespace GalEngine
 {
-    public class Size<T> where T : IEquatable<T>
+    public struct Size
     {
-        public T Width { get; }
-        public T Height { get; }
+        public int Width { get; set; }
+        public int Height { get; set; }
 
-        public Size(T width, T height)
+        public bool Empty => Width == 0 || Height == 0;
+
+        public Size(int width = 0, int height = 0)
         {
             Width = width;
             Height = height;
         }
 
-        public Size()
-        {
-            Width = default(T);
-            Height = default(T);
-        }
-
-        public static bool operator == (Size<T> left, Size<T> right)
+        public static bool operator ==(Size left, Size right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator != (Size<T> left, Size<T> right)
+        public static bool operator !=(Size left, Size right)
         {
             return !left.Equals(right);
         }
 
         public override bool Equals(object obj)
         {
-            return obj is Size<T> size &&
-                   EqualityComparer<T>.Default.Equals(Width, size.Width) &&
-                   EqualityComparer<T>.Default.Equals(Height, size.Height);
+            return obj is Size size &&
+                   EqualityComparer<int>.Default.Equals(Width, size.Width) &&
+                   EqualityComparer<int>.Default.Equals(Height, size.Height);
         }
 
         public override int GetHashCode()
         {
             var hashCode = 859600377;
-            hashCode = hashCode * -1521134295 + EqualityComparer<T>.Default.GetHashCode(Width);
-            hashCode = hashCode * -1521134295 + EqualityComparer<T>.Default.GetHashCode(Height);
+            hashCode = hashCode * -1521134295 + EqualityComparer<int>.Default.GetHashCode(Width);
+            hashCode = hashCode * -1521134295 + EqualityComparer<int>.Default.GetHashCode(Height);
+            return hashCode;
+        }
+
+        public override string ToString()
+        {
+            return "Width = " + Width + ", Height = " + Height;
+        }
+    }
+
+    public struct Sizef
+    {
+        public float Width { get; set; }
+        public float Height { get; set; }
+
+        public Sizef(float width = 0, float height = 0)
+        {
+            Width = width;
+            Height = height;
+        }
+
+        public static bool operator == (Sizef left, Sizef right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator != (Sizef left, Sizef right)
+        {
+            return !left.Equals(right);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Size size &&
+                   EqualityComparer<float>.Default.Equals(Width, size.Width) &&
+                   EqualityComparer<float>.Default.Equals(Height, size.Height);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 859600377;
+            hashCode = hashCode * -1521134295 + EqualityComparer<float>.Default.GetHashCode(Width);
+            hashCode = hashCode * -1521134295 + EqualityComparer<float>.Default.GetHashCode(Height);
             return hashCode;
         }
     }

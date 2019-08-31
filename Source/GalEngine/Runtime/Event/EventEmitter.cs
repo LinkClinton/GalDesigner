@@ -21,7 +21,7 @@ namespace GalEngine
             mEventListeners = new List<EventListener>();
         }
 
-        public void SenderEvent(BaseEvent baseEvent)
+        public virtual void ForwardEvent(BaseEvent baseEvent)
         {
             mEventQueue.Enqueue(baseEvent);
             

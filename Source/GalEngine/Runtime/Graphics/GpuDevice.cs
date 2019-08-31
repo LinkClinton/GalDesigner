@@ -44,9 +44,22 @@ namespace GalEngine.Runtime.Graphics
                  SharpDX.Direct3D.FeatureLevel.Level_11_0,
                  SharpDX.Direct3D.FeatureLevel.Level_12_0
             };
-            
-            //create device with current adapter
-            mDevice = new SharpDX.Direct3D11.Device(Adapter.Adapter, creationFlags, fetuares);
+
+            try
+            {
+                //create device with current adapter
+                mDevice = new SharpDX.Direct3D11.Device(Adapter.Adapter, creationFlags, fetuares);
+            }
+            catch (SharpDX.SharpDXException)
+            {
+                //try without debug layer
+                creationFlags = SharpDX.Direct3D11.DeviceCreationFlags.None;
+
+                mDevice = new SharpDX.Direct3D11.Device(Adapter.Adapter, creationFlags, fetuares);
+
+                LogEmitter.Apply(LogLevel.Warning, "[Enable Graphics Debug Layer Failed]");
+            }
+      
             mImmediateContext = Device.ImmediateContext;
             
             LogEmitter.Apply(LogLevel.Information, "[Initialize Graphics Device with {0}]", adapter.Description);
@@ -66,23 +79,23 @@ namespace GalEngine.Runtime.Graphics
             ImmediateContext.ClearState();
         }
 
-        public void ClearRenderTarget(GpuRenderTarget renderTarget, Vector4<float> color)
+        public void ClearRenderTarget(GpuRenderTarget renderTarget, Colorf color)
         {
             //clear render target using color
             //x = red, y = green, z = blue, w = alpha
             ImmediateContext.ClearRenderTargetView(renderTarget.RenderTarget,
-                new SharpDX.Mathematics.Interop.RawColor4(color.X, color.Y, color.Z, color.W));
+                new SharpDX.Mathematics.Interop.RawColor4(color.Red, color.Green, color.Blue, color.Alpha));
         }
 
-        public void ClearRenderTarget(Image renderTarget, Vector4<float> color)
+        public void ClearRenderTarget(Image renderTarget, Colorf color)
         {
             //clear render target using color
             //x = red, y = green, z = blue, w = alpha
             ImmediateContext.ClearRenderTargetView(renderTarget.GpuRenderTarget.RenderTarget,
-                new SharpDX.Mathematics.Interop.RawColor4(color.X, color.Y, color.Z, color.W));
+                new SharpDX.Mathematics.Interop.RawColor4(color.Red, color.Green, color.Blue, color.Alpha));
         }
 
-        public void SetViewPort(Rectangle<float> viewPort)
+        public void SetViewPort(Rectanglef viewPort)
         {
             //set view port
 
@@ -138,7 +151,7 @@ namespace GalEngine.Runtime.Graphics
             ImmediateContext.PixelShader.SetShader(mPixelShader.PixelShader, null, 0);
         }
 
-        public void SetBuffer(GpuBuffer buffer, int register, GpuShaderType target = GpuShaderType.VertexShaderAndPixelShader)
+        public void SetBuffer(GpuBuffer buffer, int register, GpuShaderType target = GpuShaderType.All)
         {
             //set buffer Direct3D instance to pipeline's shader
             //we use target shader to flag which shader the buffer will set to
@@ -155,7 +168,7 @@ namespace GalEngine.Runtime.Graphics
                 ImmediateContext.PixelShader.SetConstantBuffer(register, buffer.Resource as SharpDX.Direct3D11.Buffer);
         }
 
-        public void SetResourceUsage(GpuResourceUsage resourceUsage, int register, GpuShaderType target = GpuShaderType.VertexShaderAndPixelShader)
+        public void SetResourceUsage(GpuResourceUsage resourceUsage, int register, GpuShaderType target = GpuShaderType.All)
         {
             //set resource Direct3D instance to pipeline's shader
             //we use target shader to flag which shader the resource will set to
@@ -169,7 +182,7 @@ namespace GalEngine.Runtime.Graphics
                 ImmediateContext.PixelShader.SetShaderResource(register, resourceUsage.ShaderResource);
         }
 
-        public void SetSamplerState(GpuSamplerState samplerState, int register, GpuShaderType target = GpuShaderType.VertexShaderAndPixelShader)
+        public void SetSamplerState(GpuSamplerState samplerState, int register, GpuShaderType target = GpuShaderType.All)
         {
             //set sampler state Direct3D instance to pipeline's shader
             //we use target shader to flag which shader the resource will set to

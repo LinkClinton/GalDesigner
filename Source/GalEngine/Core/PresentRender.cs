@@ -13,19 +13,19 @@ namespace GalEngine
     {
         private struct Vertex
         {
-            public Vector3 Position;
-            public Vector2 TexCoord;
+            public System.Numerics.Vector3 Position;
+            public System.Numerics.Vector2 TexCoord;
         }
 
         private struct Transform
         {
-            public Matrix4x4 World;
-            public Matrix4x4 Projection;
+            public System.Numerics.Matrix4x4 World;
+            public System.Numerics.Matrix4x4 Projection;
         }
 
         private struct RenderConfig
         {
-            public Vector4 Opacity;
+            public System.Numerics.Vector4 Opacity;
         }
 
         private IntPtr mHandle;
@@ -50,7 +50,7 @@ namespace GalEngine
         private readonly int mTransformBufferSlot = 0;
         private readonly int mRenderConfigBufferSlot = 0;
 
-        public PresentRender(GpuDevice device, IntPtr handle, Size<int> size)
+        public PresentRender(GpuDevice device, IntPtr handle, Size size)
         {
             mHandle = handle;
             mDevice = device;
@@ -82,10 +82,10 @@ namespace GalEngine
             //init vertex and index data
             Vertex[] vertices = new Vertex[]
             {
-                new Vertex() { Position = new Vector3(0, 0, 0), TexCoord = new Vector2(0, 0) },
-                new Vertex() { Position = new Vector3(0, 1, 0), TexCoord = new Vector2(0, 1) },
-                new Vertex() { Position = new Vector3(1, 1, 0), TexCoord = new Vector2(1, 1) },
-                new Vertex() { Position = new Vector3(1, 0, 0), TexCoord = new Vector2(1, 0) }
+                new Vertex() { Position = new System.Numerics.Vector3(0, 0, 0), TexCoord = new System.Numerics.Vector2(0, 0) },
+                new Vertex() { Position = new System.Numerics.Vector3(0, 1, 0), TexCoord = new System.Numerics.Vector2(0, 1) },
+                new Vertex() { Position = new System.Numerics.Vector3(1, 1, 0), TexCoord = new System.Numerics.Vector2(1, 1) },
+                new Vertex() { Position = new System.Numerics.Vector3(1, 0, 0), TexCoord = new System.Numerics.Vector2(1, 0) }
             };
 
             uint[] indices = new uint[]
@@ -124,7 +124,7 @@ namespace GalEngine
             mGpuSamplerState = new GpuSamplerState(mDevice);
         }
 
-        public void ReSize(Size<int> newSize)
+        public void ReSize(Size newSize)
         {
             Utility.Dispose(ref mSwapChain);
 
@@ -136,7 +136,7 @@ namespace GalEngine
             //reset graphics pipeline and set render target
             mDevice.Reset();
             mDevice.SetRenderTarget(mSwapChain.RenderTarget);
-            mDevice.ClearRenderTarget(mSwapChain.RenderTarget, new Vector4<float>(1, 1, 1, 1));
+            mDevice.ClearRenderTarget(mSwapChain.RenderTarget, new Colorf(1, 1, 1, 1));
 
             //set graphics pipeline
             mDevice.SetBlendState(mBlendState);
@@ -149,7 +149,7 @@ namespace GalEngine
             mDevice.SetVertexShader(mVertexShader);
             mDevice.SetPixelShader(mDrawPixelShader);
 
-            mDevice.SetViewPort(new Rectangle<float>(0, 0, mSwapChain.Size.Width, mSwapChain.Size.Height));
+            mDevice.SetViewPort(new Rectanglef(0, 0, mSwapChain.Size.Width, mSwapChain.Size.Height));
         }
 
         public void EndDraw(bool sync)
@@ -157,17 +157,17 @@ namespace GalEngine
             Present(sync);
         }
 
-        public void Draw(Image texture, Rectangle<int> area, float opacity = 1.0f)
+        public void Draw(Image texture, Rectangle area, float opacity = 1.0f)
         {
             //init the data we need uo upload
             Transform transform = new Transform();
             RenderConfig renderConfig = new RenderConfig();
 
-            transform.World = Matrix4x4.CreateTranslation(new Vector3(area.Left, area.Top, 0));
-            transform.World = Matrix4x4.CreateScale(new Vector3(area.Right - area.Left, area.Bottom - area.Top, 1)) * transform.World;
+            transform.World = Matrix4x4.CreateTranslation(new System.Numerics.Vector3(area.Left, area.Top, 0));
+            transform.World = Matrix4x4.CreateScale(new System.Numerics.Vector3(area.Right - area.Left, area.Bottom - area.Top, 1)) * transform.World;
             transform.Projection = Matrix4x4.CreateOrthographicOffCenter(0, mSwapChain.Size.Width, 0, mSwapChain.Size.Height, 0, 1);
 
-            renderConfig.Opacity = new Vector4(opacity);
+            renderConfig.Opacity = new System.Numerics.Vector4(opacity);
 
             //upload it to gpu memory
             mTransformBuffer.Update(transform);
@@ -183,17 +183,17 @@ namespace GalEngine
             mDevice.DrawIndexed(6, 0, 0);
         }
 
-        public void Mask(Image texture, Rectangle<int> area, float opacity = 1.0f)
+        public void Mask(Image texture, Rectangle area, float opacity = 1.0f)
         {
             //init the data we need uo upload
             Transform transform = new Transform();
             RenderConfig renderConfig = new RenderConfig();
 
-            transform.World = Matrix4x4.CreateTranslation(new Vector3(area.Left, area.Top, 0));
-            transform.World = Matrix4x4.CreateScale(new Vector3(area.Right - area.Left, area.Bottom - area.Top, 1)) * transform.World;
+            transform.World = Matrix4x4.CreateTranslation(new System.Numerics.Vector3(area.Left, area.Top, 0));
+            transform.World = Matrix4x4.CreateScale(new System.Numerics.Vector3(area.Right - area.Left, area.Bottom - area.Top, 1)) * transform.World;
             transform.Projection = Matrix4x4.CreateOrthographicOffCenter(0, mSwapChain.Size.Width, 0, mSwapChain.Size.Height, 0, 1);
 
-            renderConfig.Opacity = new Vector4(opacity);
+            renderConfig.Opacity = new System.Numerics.Vector4(opacity);
 
             //upload it to gpu memory
             mTransformBuffer.Update(transform);

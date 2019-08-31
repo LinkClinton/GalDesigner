@@ -17,9 +17,9 @@ namespace GalEngine
         public Font Font => mFont;
         public string Content => mContent;
         public Image Image => mImage;
-        public Size<int> Size => mImage.Size;
+        public Size Size => mImage.Size;
 
-        private static Size<int> GenRequirementSize(string content, Font font)
+        private static Size GenRequirementSize(string content, Font font)
         {
             //see more in freetype
             var sizeMetrices = font.FontFace.Size.Metrics;
@@ -53,7 +53,7 @@ namespace GalEngine
                 penPositionX = penPositionX + codeMetrics.Advance;
             }
 
-            return new Size<int>(requirementWidth, requirementHeight);
+            return new Size(requirementWidth, requirementHeight);
         }
 
         private static void GenTextureFromContent(string content, Font font, Image texture, ref List<int> characterPostLocation)
@@ -86,11 +86,11 @@ namespace GalEngine
 
                 //copy character texture to text texture 
                 //the text texture is the texture we will display
-                texture.CopyFromImage(new Position<int>(
+                texture.CopyFromImage(new Point2(
                     penPositionX + codeMetrics.HoriBearingX,
                     penPositionY - codeMetrics.HoriBearingY),
                     codeMetrics.Texture,
-                    new Rectangle<int>(0, 0, sourceTextureWidth, sourceTextureHeight));
+                    new Rectangle(0, 0, sourceTextureWidth, sourceTextureHeight));
 
                 //next character
                 penPositionX = penPositionX + codeMetrics.Advance;
@@ -111,6 +111,8 @@ namespace GalEngine
             GenTextureFromContent(mContent, mFont, mImage, ref mCharacterPostLocation);
         }
 
+        ~RowText() => Dispose();
+
         public int GetCharacterPostLocation(int location)
         {
             return mCharacterPostLocation[location];
@@ -126,7 +128,7 @@ namespace GalEngine
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            Utility.Dispose(ref mImage);
         }
     }
 }

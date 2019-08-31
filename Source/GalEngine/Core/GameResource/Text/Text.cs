@@ -9,18 +9,18 @@ namespace GalEngine
     public class Text : IDisposable
     {
         private readonly Font mFont;
-        private readonly Size<int> mMaxSize;
+        private readonly Size mMaxSize;
         private readonly string mContent;
 
         private Image mImage;
         
         public Font Font => mFont;
-        public Size<int> MaxSize => mMaxSize;
+        public Size MaxSize => mMaxSize;
         public string Content => mContent;
         public Image Image => mImage;
-        public Size<int> Size => mImage.Size;
+        public Size Size => mImage.Size;
 
-        private static Size<int> GenRequirementSize(string content, Font font, Size<int> maxSize)
+        private static Size GenRequirementSize(string content, Font font, Size maxSize)
         {
             //see more in freetype
             var sizeMetrices = font.FontFace.Size.Metrics;
@@ -79,7 +79,7 @@ namespace GalEngine
             requirementWidth = Math.Min(requirementWidth, maxSize.Width);
             requirementHeight = Math.Min(requirementHeight, maxSize.Height);
 
-            return new Size<int>(requirementWidth, requirementHeight);
+            return new Size(requirementWidth, requirementHeight);
         }
 
         private static void GenTextureFromContent(string content, Font font, Image texture)
@@ -130,24 +130,24 @@ namespace GalEngine
 
                 //copy character texture to text texture 
                 //the text texture is the texture we will display
-                texture.CopyFromImage(new Position<int>(
+                texture.CopyFromImage(new Point2(
                     penPositionX + codeMetrics.HoriBearingX,
                     penPositionY - codeMetrics.HoriBearingY),
                     codeMetrics.Texture,
-                    new Rectangle<int>(0, 0, sourceTextureWidth, sourceTextureHeight));
+                    new Rectangle(0, 0, sourceTextureWidth, sourceTextureHeight));
 
                 //next character
                 penPositionX = penPositionX + codeMetrics.Advance;
             }
         }
 
-        public Text(string content, Font font, Size<int> maxSize)
+        public Text(string content, Font font, Size maxSize)
         {
             mFont = font;
             mMaxSize = maxSize;
             mContent = content;
 
-            maxSize = new Size<int>(
+            maxSize = new Size(
                 maxSize.Width == 0 ? int.MaxValue : maxSize.Width,
                 maxSize.Height == 0 ? int.MaxValue : maxSize.Height);
 
@@ -156,7 +156,7 @@ namespace GalEngine
             GenTextureFromContent(mContent, mFont, mImage);
         }
 
-        public Text(string ontent, Font font) : this(ontent, font, new Size<int>(0, 0))
+        public Text(string ontent, Font font) : this(ontent, font, new Size(0, 0))
         {
 
         }

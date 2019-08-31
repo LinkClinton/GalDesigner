@@ -8,10 +8,10 @@ namespace GalEngine
 {
     public class SizeChangeEvent : BaseEvent
     {
-        public Size<int> Before { get; }
-        public Size<int> After { get; }
+        public Size Before { get; }
+        public Size After { get; }
 
-        public SizeChangeEvent(DateTime time, Size<int> before, Size<int> after) : base(time)
+        public SizeChangeEvent(DateTime time, Size before, Size after) : base(time)
         {
             Before = before;
             After = after;

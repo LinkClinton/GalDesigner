@@ -12,16 +12,19 @@ namespace GalEngine
         private APILibrary.Win32.Internal.WndProc mWndProc;
         private APILibrary.Win32.Rect mLastClipRect;
 
+        private EventForwardInputEmitter mEventForwardInputEmitter;
+
         public string Name { get; private set; }
         public string Icon { get; }
 
-        public Size<int> Size { get; private set; }
-        public Position<int> Position { get; private set; }
+        public Size Size { get; private set; }
+        public Point2 Position { get; private set; }
 
         public bool IsExisted { get; set; }
 
         public IntPtr Handle => mHandle;
 
+        public event CharEventHandler OnCharEvent;
         public event UpdateEventHandler OnUpdateEvent;
         public event KeyBoardEventHandler OnKeyBoardEvent;
         public event MouseMoveEventHandler OnMouseMoveEvent;
@@ -33,12 +36,12 @@ namespace GalEngine
            IntPtr wParam, IntPtr lParam)
         {
             //record old size
-            Size<int> oldSize = Size;
+            Size oldSize = Size;
 
             //get window size
-            Size<int> getSize()
+            Size getSize()
             {
-                return new Size<int>(
+                return new Size(
                     APILibrary.Win32.Message.LowWord(lParam),
                     APILibrary.Win32.Message.HighWord(lParam));
             }
@@ -47,7 +50,9 @@ namespace GalEngine
             {
                 case APILibrary.Win32.WinMsg.WM_DESTROY: APILibrary.Win32.Internal.PostQuitMessage(0); break;
                 //catch the size event, because the order, we record old size
-                case APILibrary.Win32.WinMsg.WM_SIZE: SenderEvent(new SizeChangeEvent(DateTime.Now, oldSize, Size = getSize())); break;
+                case APILibrary.Win32.WinMsg.WM_SIZE: ForwardEvent(new SizeChangeEvent(DateTime.Now, oldSize, Size = getSize())); break;
+                //catch the char input event
+                case APILibrary.Win32.WinMsg.WM_CHAR: ForwardEvent(new CharEvent(DateTime.Now, (char)wParam)); break;
                 default: break;
             }
 
@@ -77,9 +82,9 @@ namespace GalEngine
         private void CatchMessage(APILibrary.Win32.Message message)
         {
             //get mouse position
-            Position<int> mousePosition()
+            Point2 mousePosition()
             {
-                return new Position<int>(
+                return new Point2(
                     APILibrary.Win32.Message.GetXFromLparam(message.lParam),
                     APILibrary.Win32.Message.GetYFromLparam(message.lParam));
             }
@@ -121,27 +126,27 @@ namespace GalEngine
             switch ((APILibrary.Win32.WinMsg)message.type)
             {
                 //sender event
-                case APILibrary.Win32.WinMsg.WM_KEYUP: SenderEvent(new KeyBoardEvent(DateTime.Now, (KeyCode)message.wParam, false)); break;
-                case APILibrary.Win32.WinMsg.WM_KEYDOWN: SenderEvent(new KeyBoardEvent(DateTime.Now, (KeyCode)message.wParam, true)); break;
-                case APILibrary.Win32.WinMsg.WM_MOUSEMOVE: SenderEvent(new MouseMoveEvent(DateTime.Now, mousePosition())); break;
+                case APILibrary.Win32.WinMsg.WM_KEYUP: ForwardEvent(new KeyBoardEvent(DateTime.Now, (KeyCode)message.wParam, false)); break;
+                case APILibrary.Win32.WinMsg.WM_KEYDOWN: ForwardEvent(new KeyBoardEvent(DateTime.Now, (KeyCode)message.wParam, true)); break;
+                case APILibrary.Win32.WinMsg.WM_MOUSEMOVE: ForwardEvent(new MouseMoveEvent(DateTime.Now, mousePosition())); break;
                 case APILibrary.Win32.WinMsg.WM_LBUTTONUP: unLockCursor();
-                    SenderEvent(new MouseClickEvent(DateTime.Now, mousePosition(), MouseButton.Left, false)); break;
+                    ForwardEvent(new MouseClickEvent(DateTime.Now, mousePosition(), MouseButton.Left, false)); break;
                 case APILibrary.Win32.WinMsg.WM_MBUTTONUP: unLockCursor();
-                    SenderEvent(new MouseClickEvent(DateTime.Now, mousePosition(), MouseButton.Middle, false)); break;
+                    ForwardEvent(new MouseClickEvent(DateTime.Now, mousePosition(), MouseButton.Middle, false)); break;
                 case APILibrary.Win32.WinMsg.WM_RBUTTONUP: unLockCursor();
-                    SenderEvent(new MouseClickEvent(DateTime.Now, mousePosition(), MouseButton.Right, false)); break;
-                case APILibrary.Win32.WinMsg.WM_MOUSEWHEEL: SenderEvent(new MouseWheelEvent(DateTime.Now, mousePosition(), mouseWheelScrollOffset())); break;
+                    ForwardEvent(new MouseClickEvent(DateTime.Now, mousePosition(), MouseButton.Right, false)); break;
+                case APILibrary.Win32.WinMsg.WM_MOUSEWHEEL: ForwardEvent(new MouseWheelEvent(DateTime.Now, mousePosition(), mouseWheelScrollOffset())); break;
                 case APILibrary.Win32.WinMsg.WM_LBUTTONDOWN: lockCursor();
-                    SenderEvent(new MouseClickEvent(DateTime.Now, mousePosition(), MouseButton.Left, true)); break;
+                    ForwardEvent(new MouseClickEvent(DateTime.Now, mousePosition(), MouseButton.Left, true)); break;
                 case APILibrary.Win32.WinMsg.WM_MBUTTONDOWN: lockCursor();
-                    SenderEvent(new MouseClickEvent(DateTime.Now, mousePosition(), MouseButton.Middle, true)); break;
+                    ForwardEvent(new MouseClickEvent(DateTime.Now, mousePosition(), MouseButton.Middle, true)); break;
                 case APILibrary.Win32.WinMsg.WM_RBUTTONDOWN: lockCursor();
-                    SenderEvent(new MouseClickEvent(DateTime.Now, mousePosition(), MouseButton.Right, true)); break;
+                    ForwardEvent(new MouseClickEvent(DateTime.Now, mousePosition(), MouseButton.Right, true)); break;
                 default: break;
             }
         }
 
-        public EngineWindow(string name, string icon, Size<int> size)
+        public EngineWindow(string name, string icon, Size size)
         {
             Name = name; Icon = icon;
             Size = size;
@@ -191,9 +196,12 @@ namespace GalEngine
             //get window rect property
             APILibrary.Win32.Internal.GetWindowRect(mHandle, ref rect);
 
+            //set event forwarder
+            mEventForwardInputEmitter = new EventForwardInputEmitter(this);
+
             //set position and size
-            Position = new Position<int>(rect.left, rect.top);
-            Size = new Size<int>(rect.right - rect.left, rect.bottom - rect.top);
+            Position = new Point2(rect.left, rect.top);
+            Size = new Size(rect.right - rect.left, rect.bottom - rect.top);
             IsExisted = true;
         }
 
@@ -202,14 +210,15 @@ namespace GalEngine
             //pump message
             PumpMessage();
 
-            SenderEvent(new UpdateEvent(DateTime.Now, deltaTime));
-            SenderEvent(new RenderEvent(DateTime.Now, deltaTime));
+            ForwardEvent(new UpdateEvent(DateTime.Now, deltaTime));
+            ForwardEvent(new RenderEvent(DateTime.Now, deltaTime));
 
             //process the event
             while (EventCount != 0)
             {
                 switch (GetEvent(true))
                 {
+                    case CharEvent charInput: OnCharEvent?.Invoke(this, charInput); break;
                     case UpdateEvent update: OnUpdateEvent?.Invoke(this, update); break;
                     case KeyBoardEvent keyBoard: OnKeyBoardEvent?.Invoke(this, keyBoard); break;
                     case MouseClickEvent mouseClick: OnMouseClickEvent?.Invoke(this, mouseClick); break;
@@ -235,7 +244,7 @@ namespace GalEngine
             APILibrary.Win32.Internal.SetWindowText(mHandle, Name = name);
         }
 
-        public void SetSize(Size<int> size)
+        public void SetSize(Size size)
         {
             Size = size;
 
@@ -245,13 +254,20 @@ namespace GalEngine
                 APILibrary.Win32.SetWindowPosFlags.SWP_NOZORDER));
         }
 
-        public void SetPosition(Position<int> position)
+        public void SetPosition(Point2 position)
         {
             Position = position;
 
             APILibrary.Win32.Internal.SetWindowPos(mHandle, IntPtr.Zero, Position.X, Position.Y,
                 0, 0, (uint)(APILibrary.Win32.SetWindowPosFlags.SWP_NOSIZE |
                 APILibrary.Win32.SetWindowPosFlags.SWP_NOZORDER));
+        }
+
+        public override void ForwardEvent(BaseEvent baseEvent)
+        {
+            mEventForwardInputEmitter.Forward(baseEvent);
+
+            base.ForwardEvent(baseEvent);
         }
     }
 }

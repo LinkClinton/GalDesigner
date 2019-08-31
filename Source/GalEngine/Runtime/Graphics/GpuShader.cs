@@ -11,7 +11,7 @@ namespace GalEngine.Runtime.Graphics
         None = 0,
         VertexShader = 1,
         PixelShader = 2,
-        VertexShaderAndPixelShader = 3
+        All = 3
     }
 
     public abstract class GpuShader

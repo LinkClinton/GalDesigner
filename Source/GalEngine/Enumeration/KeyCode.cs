@@ -11,36 +11,12 @@ namespace GalEngine
     {
         //
         // Summary:
-        //     The bitmask to extract modifiers from a key value.
-        Modifiers = -65536,
-        //
-        // Summary:
         //     No key pressed.
         None = 0,
         //
         // Summary:
-        //     The left mouse button.
-        LButton = 1,
-        //
-        // Summary:
-        //     The right mouse button.
-        RButton = 2,
-        //
-        // Summary:
         //     The CANCEL key.
         Cancel = 3,
-        //
-        // Summary:
-        //     The middle mouse button (three-button mouse).
-        MButton = 4,
-        //
-        // Summary:
-        //     The first x mouse button (five-button mouse).
-        XButton1 = 5,
-        //
-        // Summary:
-        //     The second x mouse button (five-button mouse).
-        XButton2 = 6,
         //
         // Summary:
         //     The BACKSPACE key.
@@ -770,22 +746,6 @@ namespace GalEngine
         //
         // Summary:
         //     The CLEAR key.
-        OemClear = 254,
-        //
-        // Summary:
-        //     The bitmask to extract a key code from a key value.
-        KeyCode = 65535,
-        //
-        // Summary:
-        //     The SHIFT modifier key.
-        Shift = 65536,
-        //
-        // Summary:
-        //     The CTRL modifier key.
-        Control = 131072,
-        //
-        // Summary:
-        //     The ALT modifier key.
-        Alt = 262144
+        OemClear = 254
     }
 }

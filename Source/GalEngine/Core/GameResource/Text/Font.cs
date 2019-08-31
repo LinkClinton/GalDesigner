@@ -29,46 +29,30 @@ namespace GalEngine
 
     public class Font : IDisposable
     {
-        private static readonly Library mLibrary = new Library();
-        private static readonly Font mInternalFont = new Font("Internal.UbuntuMono-R-17.Font", 17, Properties.Resources.UbuntuMono_R);
-
         private Face mFace;
-        private readonly GpuDevice mDevice;
 
+        private readonly FontClass mFontClass;
         private readonly Dictionary<char, CharacterCodeMetrics> mCharacterIndex;
 
         internal Face FontFace => mFace;
-        internal GpuDevice GpuDevice => mDevice;
-
+        
         public int Size { get; }
 
-        public string Name { get; }
+        public string ClassName { get; }
 
-        public static Font Default => mInternalFont;
-
-        public Font(int size) : this("Internal.UbuntuMono-R-" + size + ".Font", size, Properties.Resources.UbuntuMono_R)
+        internal Font(string className, Face face, int size, FontClass fontClass)
         {
-
-        }
-
-        public Font(string name, int size, byte[] fontData) : this(name, size, fontData, GameSystems.GpuDevice)
-        {
-
-        }
-
-        public Font(string name, int size, byte[] fontData, GpuDevice device)
-        {
-            //create font
-            mFace = new Face(mLibrary, fontData, 0);
-            mDevice = device;
+            mFace = face;
             Size = size;
-            Name = name;
-
+            ClassName = className;
+            
             //set font size and encoding
             mFace.SetPixelSizes(0, (uint)size);
             mFace.SelectCharmap(SharpFont.Encoding.Unicode);
 
             mCharacterIndex = new Dictionary<char, CharacterCodeMetrics>();
+
+            mFontClass = fontClass;
         }
 
         ~Font() => Dispose();
@@ -95,7 +79,7 @@ namespace GalEngine
             {
                 index = mFace.GetCharIndex(' ');
 
-                LogEmitter.Apply(LogLevel.Warning, "There are some nonsupport character used in [{0}] font.", Name);
+                LogEmitter.Apply(LogLevel.Warning, "There are some nonsupport character used in [{0}] font.", ClassName);
             }
 
             //load glyph
@@ -111,9 +95,9 @@ namespace GalEngine
             codeMetrics.HoriBearingX = (mFace.Glyph.Metrics.HorizontalBearingX.Value >> 6);
             codeMetrics.HoriBearingY = (mFace.Glyph.Metrics.HorizontalBearingY.Value >> 6);
             codeMetrics.Texture = mFace.Glyph.Bitmap.Buffer != IntPtr.Zero ? new Image(
-                new Size<int>(mFace.Glyph.Bitmap.Width, mFace.Glyph.Bitmap.Rows),
+                new Size(mFace.Glyph.Bitmap.Width, mFace.Glyph.Bitmap.Rows),
                 PixelFormat.Alpha8bit, mFace.Glyph.Bitmap.BufferData) : 
-                new Image(new Size<int>(0,0), PixelFormat.Alpha8bit);
+                new Image(new Size(0,0), PixelFormat.Alpha8bit);
 
             mCharacterIndex.Add(character, codeMetrics);
 
@@ -127,6 +111,9 @@ namespace GalEngine
 
             //dispose the font class
             Utility.Dispose(ref mFace);
+
+            //remove the reference in font class
+            mFontClass.FreeCache(Size);
         }
     }
 }
